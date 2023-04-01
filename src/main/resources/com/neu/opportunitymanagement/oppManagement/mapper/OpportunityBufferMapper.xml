@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.opportunitymanagement.oppManagement.mapper.OpportunityBufferMapper">
+
+    <resultMap id="FlowMap" type="Flow">
+        <result column="oppb_opp_id" property="oppId"></result>
+        <result column="oppb_id" property="oppIdB"></result>
+        <result column="oppb_name" property="oppName"></result>
+        <result column="emp_name" property="oppSubmiter"></result>
+        <result column="oppb_submit_date" property="submitDate"></result>
+        <result column="oppb_phase" property="oppPhase"></result>
+    </resultMap>
+
+
+    <select id="getApproveOppList" parameterType="String" resultMap="FlowMap">
+        select oppb_opp_id, oppb_id, oppb_name, emp_name, oppb_submit_date, oppb_phase
+        from opportunity_buffer, employee
+        <where>
+            oppb_customer_manager_id = emp_id and oppb_status = '20'
+            <if test="empPositionId == '20000010'">
+                and oppb_approve_status = 0
+            </if>
+            <if test="empPositionId == '10000030'">
+                and oppb_approve_status = 1 and (oppb_sales_dept like '803%' or oppb_sales_dept like '804%')
+            </if>
+            <if test="empPositionId == '30000010'">
+                and oppb_approve_status = 1 and oppb_sales_dept like '802%'
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

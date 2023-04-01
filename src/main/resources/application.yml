@@ -1,0 +1,39 @@
+server:
+  port: 8081
+
+# spring configuration
+spring:
+  application:
+    name: provider-server-opportunity-management
+  datasource:
+
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/npms?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false&useUnicode=true&allowMultiQueries=true
+    username: root
+    password: 635489
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    database: 0
+   # password:
+
+
+mybatis-plus:
+  mapper-locations: classpath:com/neu/opportunitymanagement/oppManagement/mapper/*.xml
+  type-aliases-package: com.neu.opportunitymanagement.oppManagement.entity,com.neu.opportunitymanagement.oppManagement.dto
+
+
+logging:
+  level:
+    com.neu.opportunitymanagement: debug
+
+
+eureka:
+  instance:
+    # Register with Eureka using ip address
+    prefer-ip-address: true
+    # The above configuration can already be registered using ip, but the host name is still displayed, so set the displayed registration name here
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:13000/eureka/, http://127.0.0.1:13001/eureka/, http://127.0.0.1:13002/eureka/

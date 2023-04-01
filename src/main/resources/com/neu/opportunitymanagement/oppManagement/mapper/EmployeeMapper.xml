@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.opportunitymanagement.oppManagement.mapper.EmployeeMapper">
+
+    <select id="getRoleById" parameterType="String" resultType="Role">
+        select pos_id, pos_name
+        from c_position, employee
+        where emp_position_id=pos_id and emp_id=#{emp_id};
+    </select>
+
+    <select id="getEmpNameById" parameterType="String" resultType="String">
+        select emp_name
+        from employee
+        where emp_id=#{emp_id};
+    </select>
+
+    <select id="getDeptNameById" parameterType="String" resultType="String">
+        select dept_name
+        from department
+        where dept_id=#{dept_id}
+    </select>
+
+</mapper>

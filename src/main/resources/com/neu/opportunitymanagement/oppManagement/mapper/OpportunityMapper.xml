@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neu.opportunitymanagement.oppManagement.mapper.OpportunityMapper">
+
+    <select id="getDeptInfoByEmpId" parameterType="String" resultType="DeptInfo">
+
+        select distinct dept_id, dept_name
+        from department, employee
+        <where>
+            emp_dept_id=dept_id
+            <if test="emp_id != null">
+                and emp_id=#{emp_id};
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getEmpInfoByEmpIdAndDeptId" parameterType="String" resultType="EmpInfo">
+
+        select distinct emp_id, emp_name
+        from employee
+        <where>
+            emp_position_id in ("30000030","30000010")
+            <if test="emp_id!=null">
+                and emp_id=#{emp_id}
+            </if>
+            <if test="dept_id!=null">
+                and emp_dept_id=#{dept_id}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="getDeptNameById" parameterType="String" resultType="String">
+        select dept_name from department where dept_id = #{dept_id};
+    </select>
+
+    <select id="getCusMgrNameById" parameterType="String" resultType="String">
+        select emp_name from employee where emp_id = #{cusMgr_id};
+    </select>
+
+    <select id="getOppBelonging" parameterType="String" resultType="OppBelongingInfo">
+        select * from c_bu
+        <where>
+            <if test="dept_name!=null">
+               cbu_name =#{dept_name}
+            </if>
+        </where>
+    </select>
+
+    <select id="getOppSearchResult" parameterType="String" resultType="OppSearchResult">
+        select * from opportunity where opp_customer_manager_id = #{emp_id}
+    </select>
+
+    <select id="getOppBelongingNameById" parameterType="String" resultType="String">
+        select cbu_name from c_bu where cbu_id = #{oppb_id};
+    </select>
+
+    <select id="getEmpByDept" parameterType="String" resultType="EmpInfo">
+        select distinct emp_id, emp_name
+        from employee
+        where emp_position_id in ("30000030","30000010") and emp_dept_id=#{dept_id}
+    </select>
+
+
+    <select id="getProductByType" parameterType="String" resultType="ProductInfo">
+        select cpro_id, cpro_name
+        from c_project_type_product_rel, c_product
+        where cptpr_pro_id = cpro_id and cptpr_bus_id = #{type_id};
+    </select>
+
+    <select id="getTypeByProduct" parameterType="String" resultType="OppTypeInfo">
+        select pso_id, pso_name
+        from c_project_type_product_rel, c_project_sub_opp_type
+        where cptpr_bus_id = pso_id and cptpr_pro_id = #{pro_id};
+    </select>
+
+
+    <select id="getOpportunity" parameterType="OppSearchCondition" resultType="OppSearchResult">
+        select * from opportunity
+        <where>
+            <if test="oppId != null and oppId != ''">
+                opp_id like "%"#{oppId}"%"
+            </if>
+            <if test="oppName != null and oppName != ''">
+                and opp_name like "%"#{oppName}"%"
+            </if>
+            <if test="oppSalesDept != null and oppSalesDept != ''">
+                and opp_sales_dept = #{oppSalesDept}
+            </if>
+            <if test="oppSignTime1 != null and oppSignTime2 != null and oppSignTime1 != '' and oppSignTime2 != ''">
+                and opp_sign_time between #{oppSignTime1} and #{oppSignTime2}
+            </if>
+            <if test="oppCustomerManagerId != null and oppCustomerManagerId != ''">
+                and opp_customer_manager_id = #{oppCustomerManagerId}
+            </if>
+            <if test="oppBelonging != null and oppBelonging != ''">
+                and opp_belonging = #{oppBelonging}
+            </if>
+            <if test="oppStatus != null and oppStatus != ''">
+                and opp_status = #{oppStatus}
+            </if>
+            <if test="oppPhase != null and oppPhase != ''">
+                and opp_phase = #{oppPhase}
+            </if>
+            <if test="oppType != null and oppType != ''">
+                and opp_type = #{oppType}
+            </if>
+            <if test="oppProduct != null and oppProduct != ''">
+                and opp_product = #{oppProduct}
+            </if>
+        </where>
+    </select>
+
+
+
+    <resultMap id="getOpportunityBMap" type="OppSearchResult">
+        <id column="oppb_id" property="oppBId"></id>
+        <result column="oppb_name" property="oppName"></result>
+        <result column="oppb_sales_dept" property="oppSalesDept"></result>
+        <result column="oppb_customer_manager_id" property="oppCustomerManagerId"></result>
+        <result column="oppb_sign_time" property="oppSignTime"></result>
+        <result column="oppb_belonging" property="oppBelonging"></result>
+        <result column="oppb_status" property="oppStatus"></result>
+        <result column="oppb_phase" property="oppPhase"></result>
+        <result column="oppb_type" property="oppType"></result>
+        <result column="oppb_product" property="oppProduct"></result>
+        <result column="oppb_background" property="oppBackground"></result>
+        <result column="oppb_cigarettes" property="oppCigarettes"></result>
+        <result column="oppb_cus_id" property="oppCusId"></result>
+        <result column="oppb_approve_status" property="oppbApproveStatus"></result>
+        <result column="oppb_opp_id" property="oppId"></result>
+        <result column="oppb_origin" property="oppOrigin"></result>
+    </resultMap>
+
+
+    <select id="getOpportunityB" parameterType="OppSearchCondition" resultMap="getOpportunityBMap">
+        select * from opportunity_buffer
+        <where>
+            ISNULL(oppb_opp_id) and oppb_status in (10,20,60)
+            <if test="oppName != null and oppName != ''">
+                and oppb_name like "%"#{oppName}"%"
+            </if>
+            <if test="oppSalesDept != null and oppSalesDept != ''">
+                and oppb_sales_dept = #{oppSalesDept}
+            </if>
+            <if test="oppSignTime1 != null and oppSignTime2 != null and oppSignTime1 != '' and oppSignTime2 != ''">
+                and oppb_sign_time between #{oppSignTime1} and #{oppSignTime2}
+            </if>
+            <if test="oppCustomerManagerId != null and oppCustomerManagerId != ''">
+                and oppb_customer_manager_id = #{oppCustomerManagerId}
+            </if>
+            <if test="oppBelonging != null and oppBelonging != ''">
+                and oppb_belonging = #{oppBelonging}
+            </if>
+            <if test="oppStatus != null and oppStatus != ''">
+                and oppb_status = #{oppStatus}
+            </if>
+            <if test="oppPhase != null and oppPhase != ''">
+                and oppb_phase = #{oppPhase}
+            </if>
+            <if test="oppType != null and oppType != ''">
+                and oppb_type = #{oppType}
+            </if>
+            <if test="oppProduct != null and oppProduct != ''">
+                and oppb_product = #{oppProduct}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getMaxOppId" resultType="String">
+        select max(opp_id) from opportunity;
+    </select>
+
+
+
+</mapper>
